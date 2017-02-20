@@ -79,6 +79,10 @@ module.exports.addTodo = function(text) {
     driver.findElement(webdriver.By.id("submit-todo")).click();
 };
 
+module.exports.clickDeleteTodo = function() {
+    driver.findElement(webdriver.By.css("#todo-list li button")).click();
+};
+
 module.exports.setupErrorRoute = function(action, route) {
     if (action === "get") {
         router.get(route, function(req, res) {
@@ -88,6 +92,11 @@ module.exports.setupErrorRoute = function(action, route) {
     if (action === "post") {
         router.post(route, function(req, res) {
             res.sendStatus(500);
+        });
+    }
+    if (action === "delete") {
+        router.get(route, function(req, res) {
+            res.sendStatus(404);
         });
     }
 };
