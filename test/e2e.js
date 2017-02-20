@@ -1,6 +1,7 @@
 var testing = require("selenium-webdriver/testing");
 var assert = require("chai").assert;
 var helpers = require("./e2eHelpers");
+var xhr = require("xmlhttprequest");
 
 testing.describe("end to end", function() {
     this.timeout(20000);
@@ -65,5 +66,27 @@ testing.describe("end to end", function() {
             });
         });
     });
+    testing.describe("on deleting items from todo list", function() {
+        testing.it("deleting an item from the list", function() {
+            helpers.navigateToSite();
+            helpers.addTodo("New todo item to be deleted");
+            helpers.clickDeleteTodo();
+            helpers.getTodoList().then(function(elements) {
+                assert.equal(elements.length, 0);
+            });
+        });
+        testing.it("displays an error if the request fails", function() {
+            helpers.navigateToSite();
+            helpers.addTodo("New todo item");
+            var createRequest = new xhr.XMLHttpRequest();
+            createRequest.open("DELETE", "/api/todo/0");
+            createRequest.send();
+            createRequest.onload = function () {
+                helpers.clickDeleteTodo();
+                helpers.getErrorText().then(function(text) {
+                    assert.equal(text, "Failed to delete item. Server returned 404 - Not Found");
+                });
+            };
+        });
+    });
 });
-
