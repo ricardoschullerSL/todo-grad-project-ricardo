@@ -85,6 +85,7 @@ module.exports.clickDeleteTodo = function() {
 
 module.exports.updateTodo = function() {
     driver.findElement(webdriver.By.className("editButton")).click();
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("inputForm")), 5000);
     var inputForm = driver.findElement(webdriver.By.className("inputForm"));
     inputForm.sendKeys("This has been updated\uE007");
     var updatedTodo = driver.findElement(webdriver.By.css("#todo-list li text"));
