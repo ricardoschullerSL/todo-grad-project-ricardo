@@ -80,7 +80,16 @@ module.exports.addTodo = function(text) {
 };
 
 module.exports.clickDeleteTodo = function() {
-    driver.findElement(webdriver.By.css("#todo-list li button")).click();
+    driver.findElement(webdriver.By.className("deleteButton")).click();
+};
+
+module.exports.updateTodo = function() {
+    driver.findElement(webdriver.By.className("editButton")).click();
+    var inputForm = driver.findElement(webdriver.By.className("inputForm"));
+    inputForm.sendKeys("This has been updated\uE007");
+    var updatedTodo = driver.findElement(webdriver.By.css("#todo-list li text"));
+    driver.wait(webdriver.until.elementTextContains(updatedTodo, "updated"), 5000);
+    return updatedTodo.getText();
 };
 
 module.exports.setupErrorRoute = function(action, route) {
