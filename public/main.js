@@ -13,6 +13,38 @@ form.onsubmit = function(event) {
     event.preventDefault();
 };
 
+function createUpdateForm(id, listItem) {
+
+    var updateForm = document.createElement("form");
+    var inputForm = document.createElement("input");
+    var submitButton = document.createElement("input");
+    var cancelButton = document.createElement("button");
+    var oldListItem = listItem;
+
+    updateForm.onsubmit = function(event) {
+        var title = inputForm.value;
+        updateTodo(id, title, function() {
+            reloadTodoList();
+        });
+        inputForm.value = "";
+        event.preventDefault();
+    };
+
+    submitButton.className = "submitButton";
+    submitButton.type = "submit";
+    submitButton.value = "Submit";
+    inputForm.className = "inputForm";
+    inputForm.placeholder = listItem.firstChild.innerText;
+    cancelButton.className = "cancelButton";
+    cancelButton.innerText = "Cancel";
+    cancelButton.addEventListener("click", reloadTodoList);
+    updateForm.appendChild(inputForm);
+    updateForm.appendChild(submitButton);
+    listItem.innerText = "";
+    listItem.appendChild(updateForm);
+    listItem.appendChild(cancelButton);
+}
+
 function createTodo(title, callback) {
     var createRequest = new XMLHttpRequest();
     createRequest.open("POST", "/api/todo");
@@ -25,6 +57,23 @@ function createTodo(title, callback) {
             callback();
         } else {
             error.textContent = "Failed to create item. Server returned " + this.status + " - " + this.responseText;
+        }
+    };
+}
+
+function updateTodo(id, title, callback) {
+    var createRequest = new XMLHttpRequest();
+    createRequest.open("PUT", "/api/todo/" + id);
+    createRequest.setRequestHeader("Content-type", "application/json");
+    createRequest.send(JSON.stringify({
+        title: title,
+        id: id
+    }));
+    createRequest.onload = function() {
+        if (this.status === 200) {
+            callback();
+        } else {
+            error.textContent = "Failed to update item. Server returned " + this.status + " - " + this.responseText;
         }
     };
 }
@@ -64,11 +113,19 @@ function reloadTodoList() {
         todoListPlaceholder.style.display = "none";
         todos.forEach(function(todo) {
             var listItem = document.createElement("li");
+            var textDiv = document.createElement("text");
             var delButton = document.createElement("button");
-            delButton.innerHTML = "Delete";
+            var editButton = document.createElement("button");
+
+            delButton.innerText = "Delete";
             delButton.addEventListener("click", function () {deleteTodo(todo.id, reloadTodoList);}, false);
             delButton.className = "deleteButton";
-            listItem.textContent = todo.title;
+            editButton.innerText = "Edit";
+            editButton.addEventListener("click", function() {createUpdateForm(todo.id, listItem);}, false);
+            editButton.className = "editButton";
+            textDiv.textContent = todo.title;
+            listItem.appendChild(textDiv);
+            listItem.appendChild(editButton);
             listItem.appendChild(delButton);
             todoList.appendChild(listItem);
         });

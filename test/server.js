@@ -116,4 +116,18 @@ describe("server", function() {
             });
         });
     });
+    describe("update a todo", function() {
+        it("responds with status code 404 if there is no such item", function(done) {
+            request.put({
+                url: todoListUrl + "/0",
+                json: {
+                    title: "This is updated",
+                    done: false
+                }
+            }, function(error, response) {
+                assert.equal(response.statusCode, 404);
+                done();
+            });
+        });
+    });
 });

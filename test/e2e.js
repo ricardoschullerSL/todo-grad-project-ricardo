@@ -89,4 +89,25 @@ testing.describe("end to end", function() {
             };
         });
     });
+    testing.describe("on updating an item from todo list", function() {
+        testing.it("update an item from the list", function() {
+            helpers.navigateToSite();
+            helpers.addTodo("New todo item to be updated.");
+            helpers.updateTodo().then(function(text) {
+                assert.equal(text, "This has been updated");
+            });
+        });
+        testing.it("displays an error if update request fails", function() {
+            helpers.navigateToSite();
+            helpers.addTodo("Put the kettle on");
+            var createRequest = new xhr.XMLHttpRequest();
+            createRequest.open("PUT", "/api/todo/1");
+            createRequest.send();
+            createRequest.onload = function () {
+                helpers.getErrorText().then(function(text) {
+                    assert.equal(text, "Failed to update item. Server returned 404 - Not Found");
+                });
+            };
+        });
+    });
 });
