@@ -84,6 +84,7 @@ module.exports.clickDeleteTodo = function() {
 };
 
 module.exports.updateTodo = function() {
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("editButton")), 5000);
     driver.findElement(webdriver.By.className("editButton")).click();
     driver.wait(webdriver.until.elementLocated(webdriver.By.className("inputForm")), 5000);
     var inputForm = driver.findElement(webdriver.By.className("inputForm"));
