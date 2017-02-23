@@ -9,75 +9,88 @@ header {
     background-color: #212a8c;
     padding: 0.5em 1em;
 }
+counterLabel {
+    margin: auto;
+    position: center;
+    width: 600px;
+}
 
 section {
-    display:block;
+    display: block;
     width: 600px;
     margin: auto;
 }
-
+ul {
+    list-style-position: inside;
+    padding: 0px;
+}
 li {
     height: 23px;
-    background-color: orange;
 }
 
-completedLi {
+.item{
+    display: inline-block;
+    background-color: orange;
     height: 23px;
-    background-color: green;
 }
 
 h1 {
     max-width: 1200px;
     margin-left: auto;
     margin-right: auto;
-}
-
-h1 {
     display: block;
     font-size: 34px;
     line-height: 34px;
     color: rgba(255, 255, 255, 0.87);
 }
 
+.shadow {
+  -moz-box-shadow:    2px 2px 3px 0px #000000;
+  -webkit-box-shadow: 2px 2px 3px 0px #000000;
+  box-shadow:         2px 2px 2px 0px #000000;
+}
+
+.button{
+    border-radius: 7px;
+    margin-left: 3px;
+    float: right;
+    display: inline-block;
+}
+
 .deleteButton {
     background-color: #212a8c;
     color: #ffffff;
-    float: right;
 }
 
 .editButton {
     background-color: #f98f25;
     color: #000000;
-    float: right;
 }
 
 .completeButton {
     background-color : green;
     color: #ffffff;
-    float: right;
 }
 .submitButton {
-    float: right;
 }
 
 .cancelButton {
-    float: right;
 }
 
 .completedTodo{
     background-color : green;
+    color: white;
+    height: 23px;
 }
 
 .uncompletedTodo{
     background-color : orange;
+    color: black;
+    height: 23px;
 }
 
 
 form {
     display: inline;
     height: 100%
-}
-
-text {
-    width : 80%;
 }
