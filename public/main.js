@@ -139,7 +139,6 @@ function reloadTodoList(filterType) {
     }
     todoListPlaceholder.style.display = "block";
     getTodoList(function(todos) {
-        var counterTodos = 0;
         todoListPlaceholder.style.display = "none";
         var filteredTodos = todoFilter(todos, filterType);
         filteredTodos.forEach(function(todo) {
@@ -161,7 +160,6 @@ function reloadTodoList(filterType) {
             completeButton.addEventListener("click", function () {completeTodo(todo.id, reloadTodoList);},
                                                                                 false);
             if (todo.isComplete) {
-                counterTodos++;
                 textDiv.className = "completedTodo";
             } else { textDiv.className = "uncompletedTodo"; }
             textDiv.textContent = todo.title;
@@ -172,7 +170,10 @@ function reloadTodoList(filterType) {
             listItem.id = "item-" + todo.id;
             todoList.appendChild(listItem);
         });
-        todoCounter.innerText = "Completed: " + counterTodos + "\nTo do:" + (todos.length - counterTodos);
+        var completedTodoCounter = todos.filter(function (obj) {return obj.isComplete;}).length;
+
+        todoCounter.innerText = "Completed: " + completedTodoCounter + "\nTo do:" +
+                                                                        (todos.length - completedTodoCounter);
     });
 }
 
