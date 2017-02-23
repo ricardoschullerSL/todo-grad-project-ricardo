@@ -92,9 +92,10 @@ testing.describe("end to end", function() {
     testing.describe("on updating an item from todo list", function() {
         testing.it("update an item from the list", function() {
             helpers.navigateToSite();
-            helpers.addTodo("New todo item to be updated.");
-            helpers.updateTodo().then(function(text) {
-                assert.equal(text, "This has been updated");
+            helpers.addTodo("New todo item to be updated.").then(function() {
+                helpers.updateTodo().then(function(text) {
+                    assert.equal(text, "This has been updated");
+                });
             });
         });
         testing.it("displays an error if update request fails", function() {
