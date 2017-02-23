@@ -3,6 +3,7 @@ var todoListPlaceholder = document.getElementById("todo-list-placeholder");
 var form = document.getElementById("todo-form");
 var todoTitle = document.getElementById("new-todo");
 var error = document.getElementById("error");
+var todoCounter = document.getElementById("count-label");
 
 form.onsubmit = function(event) {
     var title = todoTitle.value;
@@ -30,12 +31,12 @@ function createUpdateForm(id, listItem) {
         event.preventDefault();
     };
 
-    submitButton.className = "submitButton";
+    submitButton.className = "submitButton button shadow";
     submitButton.type = "submit";
     submitButton.value = "Submit";
     inputForm.className = "inputForm";
     inputForm.placeholder = listItem.firstChild.innerText;
-    cancelButton.className = "cancelButton";
+    cancelButton.className = "cancelButton button shadow";
     cancelButton.innerText = "Cancel";
     cancelButton.addEventListener("click", reloadTodoList);
     updateForm.appendChild(inputForm);
@@ -115,33 +116,39 @@ function reloadTodoList() {
     }
     todoListPlaceholder.style.display = "block";
     getTodoList(function(todos) {
+        var counterTodos = 0;
         todoListPlaceholder.style.display = "none";
         todos.forEach(function(todo) {
             var listItem = document.createElement("li");
-            var textDiv = document.createElement("text");
+            var textDiv = document.createElement("span");
             var delButton = document.createElement("button");
             var editButton = document.createElement("button");
             var completeButton = document.createElement("button");
 
+            textDiv.className = "item";
             delButton.innerText = "Delete";
             delButton.addEventListener("click", function () {deleteTodo(todo.id, reloadTodoList);}, false);
-            delButton.className = "deleteButton";
+            delButton.className = "deleteButton button shadow";
             editButton.innerText = "Edit";
             editButton.addEventListener("click", function() {createUpdateForm(todo.id, listItem);}, false);
-            editButton.className = "editButton";
-            completeButton.className = "completeButton";
+            editButton.className = "editButton button shadow";
+            completeButton.className = "completeButton button shadow";
             completeButton.innerText = "Complete";
             completeButton.addEventListener("click", function () {completeTodo(todo.id, reloadTodoList);},
                                                                                 false);
-            console.log(todo.isComplete);
-            listItem.className = todo.isComplete ? "completedTodo" : "uncompletedTodo";
+            if (todo.isComplete) {
+                counterTodos++;
+                textDiv.className = "completedTodo";
+            } else { textDiv.className = "uncompletedTodo"; }
             textDiv.textContent = todo.title;
             listItem.appendChild(textDiv);
             listItem.appendChild(delButton);
             listItem.appendChild(editButton);
             listItem.appendChild(completeButton);
+            listItem.id = "item-" + todo.id;
             todoList.appendChild(listItem);
         });
+        todoCounter.innerText = "Completed: " + counterTodos + "\nTo do:" + (todos.length - counterTodos);
     });
 }
 

@@ -88,7 +88,7 @@ module.exports.updateTodo = function() {
     driver.wait(webdriver.until.elementLocated(webdriver.By.className("inputForm")), 5000);
     var inputForm = driver.findElement(webdriver.By.className("inputForm"));
     inputForm.sendKeys("This has been updated\uE007");
-    var updatedTodo = driver.findElement(webdriver.By.css("#todo-list li text"));
+    var updatedTodo = driver.findElement(webdriver.By.css("#item-0 span"));
     driver.wait(webdriver.until.elementTextContains(updatedTodo, "updated"), 5000);
     return updatedTodo.getText();
 };
