@@ -14,6 +14,29 @@ form.onsubmit = function(event) {
     event.preventDefault();
 };
 
+function createFilterButtons() {
+    var filterPlaceholder = document.getElementById("filter-placeholder");
+    var filterAll = document.createElement("button");
+    var filterActive = document.createElement("button");
+    var filterCompleted = document.createElement("button");
+
+    filterAll.innerText = "All";
+    filterActive.innerText = "Active";
+    filterCompleted.innerText = "Completed";
+
+    filterAll.className = "button";
+    filterActive.className = "button";
+    filterCompleted.className = "button";
+
+    filterAll.onclick = function() {reloadTodoList("all");};
+    filterActive.onclick = function() {reloadTodoList("active");};
+    filterCompleted.onclick = function() {reloadTodoList("completed");};
+
+    filterPlaceholder.appendChild(filterAll);
+    filterPlaceholder.appendChild(filterActive);
+    filterPlaceholder.appendChild(filterCompleted);
+}
+
 function createUpdateForm(id, listItem) {
 
     var updateForm = document.createElement("form");
@@ -110,7 +133,7 @@ function getTodoList(callback) {
     createRequest.send();
 }
 
-function reloadTodoList() {
+function reloadTodoList(filterType) {
     while (todoList.firstChild) {
         todoList.removeChild(todoList.firstChild);
     }
@@ -118,7 +141,8 @@ function reloadTodoList() {
     getTodoList(function(todos) {
         var counterTodos = 0;
         todoListPlaceholder.style.display = "none";
-        todos.forEach(function(todo) {
+        var filteredTodos = todoFilter(todos, filterType);
+        filteredTodos.forEach(function(todo) {
             var listItem = document.createElement("li");
             var textDiv = document.createElement("span");
             var delButton = document.createElement("button");
@@ -152,4 +176,22 @@ function reloadTodoList() {
     });
 }
 
+function todoFilter(todos, filterType) {
+    var filteredList = [];
+    if (filterType === "active") {
+        filteredList = todos.filter (function (obj) {
+                return obj.isComplete === false;
+            });
+    } else {
+        if (filterType === "completed") {
+            filteredList = todos.filter (function (obj) {
+                return obj.isComplete;
+            });
+        } else {
+            filteredList = todos;
+        }
+    }
+    return filteredList;
+}
+createFilterButtons();
 reloadTodoList();
