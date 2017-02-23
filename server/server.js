@@ -34,7 +34,9 @@ module.exports = function(port, middleware, callback) {
         var id = req.params.id;
         var todo = getTodo(id);
         if (todo) {
-            todo.title = req.body.title;
+            for (var param in req.body) {
+                todo[param] = req.body[param];
+            }
             res.set("Updated", "/api/todo/" + todo.id);
             res.sendStatus(200);
         } else {

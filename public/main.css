@@ -18,7 +18,14 @@ section {
 
 li {
     height: 23px;
+    background-color: orange;
 }
+
+completedLi {
+    height: 23px;
+    background-color: green;
+}
+
 h1 {
     max-width: 1200px;
     margin-left: auto;
@@ -35,16 +42,42 @@ h1 {
 .deleteButton {
     background-color: #212a8c;
     color: #ffffff;
-    margin-right: auto;
+    float: right;
 }
 
 .editButton {
     background-color: #f98f25;
     color: #000000;
-    margin-right: auto;
+    float: right;
 }
+
+.completeButton {
+    background-color : green;
+    color: #ffffff;
+    float: right;
+}
+.submitButton {
+    float: right;
+}
+
+.cancelButton {
+    float: right;
+}
+
+.completedTodo{
+    background-color : green;
+}
+
+.uncompletedTodo{
+    background-color : orange;
+}
+
 
 form {
     display: inline;
     height: 100%
+}
+
+text {
+    width : 80%;
 }
