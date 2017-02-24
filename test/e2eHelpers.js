@@ -80,6 +80,7 @@ module.exports.addTodo = function(text) {
 };
 
 module.exports.clickDeleteTodo = function() {
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("deleteButton")), 5000);
     driver.findElement(webdriver.By.className("deleteButton")).click();
 };
 

@@ -1,3 +1,4 @@
+/* global Promise: true */
 var todoList = document.getElementById("todo-list");
 var todoListPlaceholder = document.getElementById("todo-list-placeholder");
 var form = document.getElementById("todo-form");
@@ -70,37 +71,44 @@ function createUpdateForm(id, listItem) {
 }
 
 function createTodo(newTitle, callback) {
-    var createRequest = new XMLHttpRequest();
-    createRequest.open("POST", "/api/todo");
-    createRequest.setRequestHeader("Content-type", "application/json");
-    createRequest.send(JSON.stringify({
-        title: newTitle,
-        isComplete: false
-    }));
-    createRequest.onload = function() {
-        if (this.status === 201) {
+    var payload = {title: newTitle, isComplete: false};
+    console.log(payload);
+    console.log(JSON.stringify(payload));
+
+    fetch("./api/todo/", {
+        method: "POST",
+        headers: {"Content-type": "application/json"},
+        body: JSON.stringify(payload)
+    }).then(status)
+        .then(json)
+        .then(function(data) {
+            console.log("Create request succeeded with JSON response:", data);
             callback();
-        } else {
-            error.textContent = "Failed to create item. Server returned " + this.status + " - " + this.responseText;
-        }
-    };
+        })
+        .catch(function (returnError) {
+            console.log("Create request failed,", returnError);
+            error.textContent = "Failed to create item. Server returned " + returnError;
+        });
 }
 
 function updateTodo(updateId, updateKey, updateValue, callback) {
-    var createRequest = new XMLHttpRequest();
-    var obj = {};
-    obj.id = updateId;
-    obj[updateKey] = updateValue;
-    createRequest.open("PUT", "/api/todo/" + updateId);
-    createRequest.setRequestHeader("Content-type", "application/json");
-    createRequest.send(JSON.stringify(obj));
-    createRequest.onload = function() {
-        if (this.status === 200) {
+    var payload = {};
+    payload.id = updateId;
+    payload[updateKey] = updateValue;
+    fetch("./api/todo/" + updateId, {
+        method: "PUT",
+        headers: {"Content-type": "application/json"},
+        body: JSON.stringify(payload)
+    }).then(status)
+        .then(json)
+        .then(function(data) {
+            console.log("Update request succeeded with JSON response:", data);
             callback();
-        } else {
-            error.textContent = "Failed to update item. Server returned " + this.status + " - " + this.responseText;
-        }
-    };
+        })
+        .catch(function(returnError) {
+            console.log("Update request failed,", returnError);
+            error.textContent = "Failed to update item. Server returned " + returnError;
+        });
 }
 
 function completeTodo(id, callback) {
@@ -108,16 +116,21 @@ function completeTodo(id, callback) {
 }
 
 function deleteTodo(id, callback) {
-    var createRequest = new XMLHttpRequest();
-    createRequest.open("DELETE", "/api/todo/" + id);
-    createRequest.send();
-    createRequest.onload = function() {
-        if (this.status === 200) {
+    var payload = {"id": id};
+    fetch("./api/todo/" + id, {
+        method: "DELETE",
+        headers: {"Content-type": "application/json"},
+        body: JSON.stringify(payload)
+    }).then(status)
+        .then(json)
+        .then(function(data) {
+            console.log("Delete request succeeded with JSON response:", data);
             callback();
-        } else {
-            error.textContent = "Failed to delete item. Server returned " + this.status + " - " + this.responseText;
-        }
-    };
+        })
+        .catch(function(returnError) {
+            console.log("Delete request failed,", returnError);
+            error.textContent = "Failed to delete item. Server returned " + returnError;
+        });
 }
 
 function getTodoList(callback) {
@@ -194,5 +207,17 @@ function todoFilter(todos, filterType) {
     }
     return filteredList;
 }
+function status(response) {
+    if (response.status >= 200 && response.status < 300) {
+        return Promise.resolve(response);
+    } else {
+        return Promise.reject(new Error(response.statusText));
+    }
+}
+
+function json(response) {
+    return JSON.stringify(response);
+}
+
 createFilterButtons();
 reloadTodoList();
