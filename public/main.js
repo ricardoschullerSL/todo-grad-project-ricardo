@@ -5,6 +5,7 @@ var form = document.getElementById("todo-form");
 var todoTitle = document.getElementById("new-todo");
 var error = document.getElementById("error");
 var todoCounter = document.getElementById("count-label");
+var filterType = "";
 
 form.onsubmit = function(event) {
     var title = todoTitle.value;
@@ -29,9 +30,9 @@ function createFilterButtons() {
     filterActive.className = "button";
     filterCompleted.className = "button";
 
-    filterAll.onclick = function() {reloadTodoList("all");};
-    filterActive.onclick = function() {reloadTodoList("active");};
-    filterCompleted.onclick = function() {reloadTodoList("completed");};
+    filterAll.onclick = function() {filterType = "all"; reloadTodoList();};
+    filterActive.onclick = function() {filterType = "active"; reloadTodoList();};
+    filterCompleted.onclick = function() {filterType = "completed";reloadTodoList();};
 
     filterPlaceholder.appendChild(filterAll);
     filterPlaceholder.appendChild(filterActive);
@@ -80,7 +81,6 @@ function createTodo(newTitle, callback) {
         headers: {"Content-type": "application/json"},
         body: JSON.stringify(payload)
     }).then(status)
-        .then(json)
         .then(function(data) {
             console.log("Create request succeeded with JSON response:", data);
             callback();
@@ -100,7 +100,6 @@ function updateTodo(updateId, updateKey, updateValue, callback) {
         headers: {"Content-type": "application/json"},
         body: JSON.stringify(payload)
     }).then(status)
-        .then(json)
         .then(function(data) {
             console.log("Update request succeeded with JSON response:", data);
             callback();
@@ -122,7 +121,6 @@ function deleteTodo(id, callback) {
         headers: {"Content-type": "application/json"},
         body: JSON.stringify(payload)
     }).then(status)
-        .then(json)
         .then(function(data) {
             console.log("Delete request succeeded with JSON response:", data);
             callback();
@@ -134,19 +132,22 @@ function deleteTodo(id, callback) {
 }
 
 function getTodoList(callback) {
-    var createRequest = new XMLHttpRequest();
-    createRequest.open("GET", "/api/todo");
-    createRequest.onload = function() {
-        if (this.status === 200) {
-            callback(JSON.parse(this.responseText));
-        } else {
-            error.textContent = "Failed to get list. Server returned " + this.status + " - " + this.responseText;
-        }
-    };
-    createRequest.send();
+    fetch("./api/todo/", {
+        method: "GET",
+        headers: {"Content-type": "application/json"},
+    }).then(status)
+        .then(json)
+        .then(function(data) {
+            console.log("Get request succeeded with JSON response:", data);
+            callback(data);
+        })
+        .catch(function(returnError) {
+            console.log("Get request failed,", returnError);
+            error.textContent = "Failed to get list. Server returned " + returnError;
+        });
 }
 
-function reloadTodoList(filterType) {
+function reloadTodoList() {
     while (todoList.firstChild) {
         todoList.removeChild(todoList.firstChild);
     }
@@ -163,14 +164,14 @@ function reloadTodoList(filterType) {
 
             textDiv.className = "item";
             delButton.innerText = "Delete";
-            delButton.addEventListener("click", function () {deleteTodo(todo.id, reloadTodoList);}, false);
+            delButton.addEventListener("click", function () {deleteTodo(todo.id, reloadTodoList, filterType);}, false);
             delButton.className = "deleteButton button shadow";
             editButton.innerText = "Edit";
             editButton.addEventListener("click", function() {createUpdateForm(todo.id, listItem);}, false);
             editButton.className = "editButton button shadow";
             completeButton.className = "completeButton button shadow";
             completeButton.innerText = "Complete";
-            completeButton.addEventListener("click", function () {completeTodo(todo.id, reloadTodoList);},
+            completeButton.addEventListener("click", function () {completeTodo(todo.id, reloadTodoList, filterType);},
                                                                                 false);
             if (todo.isComplete) {
                 textDiv.className = "completedTodo";
@@ -183,8 +184,8 @@ function reloadTodoList(filterType) {
             listItem.id = "item-" + todo.id;
             todoList.appendChild(listItem);
         });
-        var completedTodoCounter = todos.filter(function (obj) {return obj.isComplete;}).length;
 
+        var completedTodoCounter = todos.filter(function (obj) {return obj.isComplete;}).length;
         todoCounter.innerText = "Completed: " + completedTodoCounter + "\nTo do:" +
                                                                         (todos.length - completedTodoCounter);
     });
@@ -207,6 +208,7 @@ function todoFilter(todos, filterType) {
     }
     return filteredList;
 }
+
 function status(response) {
     if (response.status >= 200 && response.status < 300) {
         return Promise.resolve(response);
@@ -216,7 +218,7 @@ function status(response) {
 }
 
 function json(response) {
-    return JSON.stringify(response);
+    return response.json();
 }
 
 createFilterButtons();
