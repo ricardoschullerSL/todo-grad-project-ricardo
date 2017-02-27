@@ -224,20 +224,18 @@ function json(response) {
 }
 
 function checkForUpdates() {
-    getTodoList(function (todos){
-    console.log("todos is", todos);
-    console.log("todosArray is", todosArray);
-        if (JSON.stringify(todosArray) === JSON.stringify(todos)){
+    getTodoList(function (todos) {
+        if (JSON.stringify(todosArray) === JSON.stringify(todos)) {
             return false;
         } else {
             console.log("Something changed. List is updated.");
             reloadTodoList();
             return true;
-        };
+        }
     });
 }
 
-var updateId = setInterval(checkForUpdates,10000);
+var updateId = setInterval(checkForUpdates, 10000);
 
 createFilterButtons();
 reloadTodoList();
