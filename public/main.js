@@ -1,4 +1,5 @@
 /* global Promise: true */
+var todosArray = [];
 var todoList = document.getElementById("todo-list");
 var todoListPlaceholder = document.getElementById("todo-list-placeholder");
 var form = document.getElementById("todo-form");
@@ -153,6 +154,7 @@ function reloadTodoList() {
     }
     todoListPlaceholder.style.display = "block";
     getTodoList(function(todos) {
+        todosArray = todos;
         todoListPlaceholder.style.display = "none";
         var filteredTodos = todoFilter(todos, filterType);
         filteredTodos.forEach(function(todo) {
@@ -220,6 +222,20 @@ function status(response) {
 function json(response) {
     return response.json();
 }
+
+function checkForUpdates() {
+    getTodoList(function (todos) {
+        if (JSON.stringify(todosArray) === JSON.stringify(todos)) {
+            return false;
+        } else {
+            console.log("Something changed. List is updated.");
+            reloadTodoList();
+            return true;
+        }
+    });
+}
+
+var updateId = setInterval(checkForUpdates, 10000);
 
 createFilterButtons();
 reloadTodoList();
