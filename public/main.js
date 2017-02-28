@@ -54,7 +54,9 @@ function createUpdateForm(id, listItem) {
 
     updateForm.onsubmit = function(event) {
         var titleValue = inputForm.value;
-        updateTodo(id, "title", titleValue, function() {reloadTodoList();});
+        updateTodo(id, "title", titleValue, function () {
+            reloadTodoList();
+        });
         inputForm.value = "";
         event.preventDefault();
     };
@@ -76,8 +78,6 @@ function createUpdateForm(id, listItem) {
 
 function createTodo(newTitle, callback) {
     var payload = {title: newTitle, isComplete: false};
-    console.log(payload);
-    console.log(JSON.stringify(payload));
 
     fetch("./api/todo/", {
         method: "POST",
@@ -86,7 +86,7 @@ function createTodo(newTitle, callback) {
     }).then(status)
         .then(function(data) {
             console.log("Create request succeeded with JSON response:", data);
-            callback();
+            if (callback) {callback();}
         })
         .catch(function (returnError) {
             console.log("Create request failed,", returnError);
@@ -105,7 +105,7 @@ function updateTodo(updateId, updateKey, updateValue, callback) {
     }).then(status)
         .then(function(data) {
             console.log("Update request succeeded with JSON response:", data);
-            callback();
+            if (callback) {callback();}
         })
         .catch(function(returnError) {
             console.log("Update request failed,", returnError);
@@ -114,13 +114,20 @@ function updateTodo(updateId, updateKey, updateValue, callback) {
 }
 
 function completeTodo(id) {
-    updateTodo(id, "isComplete", true);
+    updateTodo(id, "isComplete", true, function () {
+        reloadTodoList();
+    });
 }
 
-function deleteTodo(id) {
+function deleteTodo(id, callback) {
     fetch("./api/todo/" + id, {
         method: "DELETE"
-    }).catch(function(returnError) {
+    }).then(status)
+    .then(function(data) {
+        console.log("Delete request succeeded with JSON response:", data);
+        if (callback) {callback();}
+    })
+    .catch(function(returnError) {
         console.log("Delete request failed,", returnError);
         error.textContent = "Failed to delete item. Server returned " + returnError;
     });
@@ -130,9 +137,9 @@ function deleteCompletedTodos(callback) {
     getTodoList(function (todos) {
         var completedTodos = todos.filter(function (obj) {return obj.isComplete;});
         completedTodos.forEach(function (todo) {
-            setTimeout(deleteTodo(todo.id), 0);
+            deleteTodo(todo.id);
         });
-        setTimeout(callback(), 0);
+        callback();
     });
 }
 
@@ -170,15 +177,14 @@ function reloadTodoList() {
 
             textDiv.className = "item";
             delButton.innerText = "Delete";
-            delButton.addEventListener("click", function () {deleteTodo(todo.id);
-                                                            setTimeout(reloadTodoList(), 0);}, false);
+            delButton.addEventListener("click", function () {deleteTodo(todo.id, reloadTodoList);}, false);
             delButton.className = "deleteButton button shadow";
             editButton.innerText = "Edit";
             editButton.addEventListener("click", function() {createUpdateForm(todo.id, listItem);}, false);
             editButton.className = "editButton button shadow";
             completeButton.className = "completeButton button shadow";
             completeButton.innerText = "Complete";
-            completeButton.addEventListener("click", function () {completeTodo(todo.id); reloadTodoList();}, false);
+            completeButton.addEventListener("click", function () {completeTodo(todo.id, reloadTodoList);}, false);
 
             textDiv.className = todo.isComplete ? "completedTodo" : "uncompletedTodo";
             textDiv.textContent = todo.title;
