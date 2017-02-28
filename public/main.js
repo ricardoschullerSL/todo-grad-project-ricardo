@@ -17,20 +17,24 @@ form.onsubmit = function(event) {
     event.preventDefault();
 };
 
-function createFilterButtons() {
+function setupButtons() {
+    var deleteCompletedButton = document.getElementById("deleteCompletedButton");
     var filterPlaceholder = document.getElementById("filter-placeholder");
     var filterAll = document.createElement("button");
     var filterActive = document.createElement("button");
     var filterCompleted = document.createElement("button");
 
+    deleteCompletedButton.innerText = "Delete Completed";
     filterAll.innerText = "All";
     filterActive.innerText = "Active";
     filterCompleted.innerText = "Completed";
 
+    deleteCompletedButton.className = "button shadow";
     filterAll.className = "button";
     filterActive.className = "button";
     filterCompleted.className = "button";
 
+    deleteCompletedButton.onclick = function() {deleteCompletedTodos(reloadTodoList);};
     filterAll.onclick = function() {filterType = "all"; reloadTodoList();};
     filterActive.onclick = function() {filterType = "active"; reloadTodoList();};
     filterCompleted.onclick = function() {filterType = "completed";reloadTodoList();};
@@ -50,9 +54,7 @@ function createUpdateForm(id, listItem) {
 
     updateForm.onsubmit = function(event) {
         var titleValue = inputForm.value;
-        updateTodo(id, "title", titleValue, function() {
-            reloadTodoList();
-        });
+        updateTodo(id, "title", titleValue, function() {reloadTodoList();});
         inputForm.value = "";
         event.preventDefault();
     };
@@ -111,25 +113,27 @@ function updateTodo(updateId, updateKey, updateValue, callback) {
         });
 }
 
-function completeTodo(id, callback) {
-    updateTodo(id, "isComplete", true, callback);
+function completeTodo(id) {
+    updateTodo(id, "isComplete", true);
 }
 
-function deleteTodo(id, callback) {
-    var payload = {"id": id};
+function deleteTodo(id) {
     fetch("./api/todo/" + id, {
-        method: "DELETE",
-        headers: {"Content-type": "application/json"},
-        body: JSON.stringify(payload)
-    }).then(status)
-        .then(function(data) {
-            console.log("Delete request succeeded with JSON response:", data);
-            callback();
-        })
-        .catch(function(returnError) {
-            console.log("Delete request failed,", returnError);
-            error.textContent = "Failed to delete item. Server returned " + returnError;
+        method: "DELETE"
+    }).catch(function(returnError) {
+        console.log("Delete request failed,", returnError);
+        error.textContent = "Failed to delete item. Server returned " + returnError;
+    });
+}
+
+function deleteCompletedTodos(callback) {
+    getTodoList(function (todos) {
+        var completedTodos = todos.filter(function (obj) {return obj.isComplete;});
+        completedTodos.forEach(function (todo) {
+            setTimeout(deleteTodo(todo.id), 0);
         });
+        setTimeout(callback(), 0);
+    });
 }
 
 function getTodoList(callback) {
@@ -166,18 +170,17 @@ function reloadTodoList() {
 
             textDiv.className = "item";
             delButton.innerText = "Delete";
-            delButton.addEventListener("click", function () {deleteTodo(todo.id, reloadTodoList, filterType);}, false);
+            delButton.addEventListener("click", function () {deleteTodo(todo.id);
+                                                            setTimeout(reloadTodoList(), 0);}, false);
             delButton.className = "deleteButton button shadow";
             editButton.innerText = "Edit";
             editButton.addEventListener("click", function() {createUpdateForm(todo.id, listItem);}, false);
             editButton.className = "editButton button shadow";
             completeButton.className = "completeButton button shadow";
             completeButton.innerText = "Complete";
-            completeButton.addEventListener("click", function () {completeTodo(todo.id, reloadTodoList, filterType);},
-                                                                                false);
-            if (todo.isComplete) {
-                textDiv.className = "completedTodo";
-            } else { textDiv.className = "uncompletedTodo"; }
+            completeButton.addEventListener("click", function () {completeTodo(todo.id); reloadTodoList();}, false);
+
+            textDiv.className = todo.isComplete ? "completedTodo" : "uncompletedTodo";
             textDiv.textContent = todo.title;
             listItem.appendChild(textDiv);
             listItem.appendChild(delButton);
@@ -190,6 +193,8 @@ function reloadTodoList() {
         var completedTodoCounter = todos.filter(function (obj) {return obj.isComplete;}).length;
         todoCounter.innerText = "Completed: " + completedTodoCounter + "\nTo do:" +
                                                                         (todos.length - completedTodoCounter);
+        var deleteCompletedButton = document.getElementById("deleteCompletedButton");
+        deleteCompletedButton.style.display = completedTodoCounter > 0 ? "inline" : "none";
     });
 }
 
@@ -237,5 +242,5 @@ function checkForUpdates() {
 
 var updateId = setInterval(checkForUpdates, 10000);
 
-createFilterButtons();
+setupButtons();
 reloadTodoList();
