@@ -89,6 +89,9 @@ h1 {
     height: 23px;
 }
 
+#deleteCompletedButton{
+    background-color : green;
+}
 
 form {
     display: inline;
