@@ -84,16 +84,54 @@ module.exports.clickDeleteTodo = function() {
     driver.findElement(webdriver.By.className("deleteButton")).click();
 };
 
-module.exports.updateTodo = function() {
+module.exports.clickEdit = function() {
     driver.wait(webdriver.until.elementLocated(webdriver.By.className("editButton")), 5000);
     driver.findElement(webdriver.By.className("editButton")).click();
+};
+
+module.exports.clickComplete = function () {
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("completeButton")), 5000);
+    driver.findElement(webdriver.By.className("completeButton")).click();
+};
+
+module.exports.findTodo = function () {
+    driver.wait(webdriver.until.elementLocated(webdriver.By.css("#item-0 span")), 5000);
+    var todo = driver.findElement(webdriver.By.css("#item-0 span"));
+    return todo;
+};
+
+module.exports.updateTodo = function() {
+    module.exports.clickEdit();
     driver.wait(webdriver.until.elementLocated(webdriver.By.className("inputForm")), 5000);
     var inputForm = driver.findElement(webdriver.By.className("inputForm"));
     inputForm.sendKeys("This has been updated\uE007");
-    driver.wait(webdriver.until.elementLocated(webdriver.By.css("#item-0 span")), 5000);
-    var updatedTodo = driver.findElement(webdriver.By.css("#item-0 span"));
+    var updatedTodo = module.exports.findTodo();
     driver.wait(webdriver.until.elementTextContains(updatedTodo, "updated"), 5000);
     return updatedTodo.getText();
+};
+
+module.exports.cancelUpdate = function() {
+    module.exports.clickEdit();
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("cancelButton")), 5000);
+    driver.findElement(webdriver.By.className("cancelButton")).click();
+    var cancelledUpdate = module.exports.findTodo();
+    return cancelledUpdate.getText();
+};
+
+module.exports.completeTodo = function() {
+    module.exports.clickComplete();
+    driver.wait(webdriver.until.elementLocated(webdriver.By.css("#item-0 span")));
+    var completedTodo = driver.findElement(webdriver.By.css("#item-0 span"));
+    return completedTodo.getAttribute("class");
+};
+
+module.exports.findDeleteComplete = function() {
+    module.exports.clickComplete();
+    driver.wait(webdriver.until.elementLocated(webdriver.By.id("deleteCompletedButton")));
+    driver.findElement(webdriver.By.id("deleteCompletedButton")).click();
+    var deleteCompletedButton = driver.findElement(webdriver.By.id("deleteCompletedButton"));
+    driver.wait(webdriver.until.elementIsNotVisible(deleteCompletedButton));
+    return driver.findElements(webdriver.By.id("#todo-list li"));
 };
 
 module.exports.setupErrorRoute = function(action, route) {
