@@ -109,5 +109,28 @@ testing.describe("end to end", function() {
                 });
             };
         });
+        testing.it("cancel an update and make sure the original text is there", function() {
+            helpers.navigateToSite();
+            helpers.addTodo("Have a cookie");
+            helpers.cancelUpdate().then(function(text) {
+                assert.equal(text, "Have a cookie");
+            });
+        });
+    });
+    testing.describe("on completing an item from todo list", function() {
+        testing.it("complete todo and check if style changed accordingly", function() {
+            helpers.navigateToSite();
+            helpers.addTodo("Complete it");
+            helpers.completeTodo().then(function(className) {
+                assert.equal(className, "completedTodo");
+            });
+        });
+        testing.it("complete todo and check if delete completed button works", function() {
+            helpers.navigateToSite();
+            helpers.addTodo("Delete Completed");
+            helpers.findDeleteComplete().then(function(elements) {
+                assert.equal(elements.length, 0);
+            });
+        });
     });
 });
