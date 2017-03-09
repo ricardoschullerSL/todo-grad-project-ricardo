@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="todoApp">
     <head>
         <meta charset="utf-8">
         <title>TODO List</title>
@@ -10,18 +10,46 @@
         <header>
             <h1>TODO List</h1>
         </header>
+        <div ng-controller ="todoListCtrl">
         <div id="count-label" class="counterLabel"></div>
-        <div id="filter-placeholder"></div>
-        <div id="deleteCompletedButton"><button></button></div>
+            <div>
+        <div id="filter-placeholder" filter-directive>
+            <button class="button" id="filterAll" ng-model="filterAll" ng-click="setFilter('all')">All</button>
+            <button class="button" id="filterTodo" ng-model="filterTodo" ng-click="setFilter('todo')">Todo</button>
+            <button class="button" id="filterCompleted" ng-model="filterCompleted" ng-click="setFilter('completed')">Completed</button>
+        </div>
+                <button class="button" id="deleteCompletedButton" ng-show="completedCounter > 0"
+                        ng-click="deleteCompleted()">Delete Completed</button>
+            </div>
+            <span>
+                Completed todos is : {{completedCounter}}
+
+            </span>
         <section>
-            <h2 id="todo-list-placeholder">Loading...</h2>
-            <ul id="todo-list"></ul>
-            <form id="todo-form">
-                <input id="new-todo" placeholder="What needs to be done?" autofocus>
+            <h2 id="todo-list-placeholder" ng-show="tdFactory.todoArray === undefined">Loading...</h2>
+                <ul id="todo-list">
+                    <li ng-repeat="todo in tdFactory.todoArray | filter: todoFilter" ng-class="'repeated-item'">
+                        <span ng-show="!editMode" ng-class="todo.isComplete ? 'completedTodo' : 'uncompletedTodo' ">{{todo.title}}</span>
+                        <form ng-show="editMode === true" ng-submit="submitEditedTodo(todo, newTitle); editMode = false;">
+                            <input ng-model="newTitle" class ="inputForm" placeholder={{todo.title}}>
+                            <button class="button cancelButton" type="button" ng-click="editMode = false">Cancel</button>
+                            <input class="button submitButton" type="submit" value="Submit">
+                        </form>
+                        <button class="button deleteButton" ng-click="deleteTodo(todo)">Delete</button>
+                        <button class="button editButton" ng-click="newTitle = ''; editMode = true;">Edit</button>
+                        <button class="button completeButton" ng-click="completeTodo(todo)">Complete</button>
+                    </li>
+                </ul>
+            <form ng-submit="submitTodo()" id="todo-form">
+                <input id="new-todo" ng-model="title" placeholder="What needs to be done?" autofocus>
                 <input id="submit-todo" type="submit" value="Create">
             </form>
-            <div id="error"></div>
+            <div id="error">{{errorMessage}}</div>
         </section>
-        <script type="text/javascript" src="main.js"></script>
+            {{updateCounter()}}
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
+        <script type="text/javascript" src="angularMain.js"></script>
     </body>
 </html>

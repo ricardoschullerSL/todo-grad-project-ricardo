@@ -25,7 +25,7 @@ ul {
     padding: 0px;
 }
 li {
-    height: 23px;
+    height: 28px;
 }
 
 .item{
@@ -51,25 +51,42 @@ h1 {
 }
 
 .button{
-    border-radius: 7px;
-    margin-left: 3px;
-    float: right;
-    display: inline-block;
+      display: inline-block;
+      margin: 0px 2px 0px 2px;
+      padding: 2px 8px;
+      font-size: 16px;
+      font-family: "Lato",Helvetica, Arial, sans-serf;
+      line-height: 1.0;
+      appearance: none;
+      box-shadow: none;
+      border: 0
 }
 
 .deleteButton {
-    background-color: #212a8c;
+    background-color: #2980B9;
     color: #ffffff;
+    float: right;
+}
+.deleteButton:hover {
+    background-color: #3498DB;
 }
 
 .editButton {
-    background-color: #f98f25;
-    color: #000000;
+    background-color: #D35400;
+    color: #ffffff;
+    float: right;
+}
+.editButton:hover{
+    background-color: #E67E22;
 }
 
 .completeButton {
-    background-color : green;
+    background-color : #09a74c;
     color: #ffffff;
+    float: right;
+}
+.completeButton:hover{
+    background-color : #2ECC71;
 }
 .submitButton {
 }
@@ -78,15 +95,17 @@ h1 {
 }
 
 .completedTodo{
-    background-color : green;
+    background-color : #09a74c ;
     color: white;
-    height: 23px;
 }
 
 .uncompletedTodo{
-    background-color : orange;
-    color: black;
-    height: 23px;
+
+}
+
+.activeFilter {
+    background-color : #2980B9;
+    color: white;
 }
 
 #deleteCompletedButton{
@@ -97,3 +116,25 @@ form {
     display: inline;
     height: 100%
 }
+
+.repeated-item {
+    transition: 0.5s linear all;
+    -webkit-transition: 0.5s linear all;
+}
+
+.repeated-item.ng-enter {
+    opacity: 0;
+}
+
+.repeated-item.ng-enter.ng-enter-active{
+    opacity: 1;
+}
+
+.repeated-item.ng-leave {
+    opacity: 1;
+}
+
+.repeated-item.ng-leave-active {
+    opacity: 0;
+}
+
