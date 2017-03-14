@@ -71,6 +71,7 @@ module.exports.getErrorText = function() {
 module.exports.getTodoList = function() {
     var todoListPlaceholder = driver.findElement(webdriver.By.id("todo-list-placeholder"));
     driver.wait(webdriver.until.elementIsNotVisible(todoListPlaceholder), 2000);
+    driver.findElement(webdriver.By.id("todo-list")).getAttribute("innerHTML");
     return driver.findElements(webdriver.By.css("#todo-list li"));
 };
 
@@ -80,8 +81,10 @@ module.exports.addTodo = function(text) {
 };
 
 module.exports.clickDeleteTodo = function() {
-    driver.wait(webdriver.until.elementLocated(webdriver.By.className("deleteButton")), 2000);
-    driver.findElement(webdriver.By.className("deleteButton")).click();
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("deleteButton")));
+    var deleteButton = driver.findElement(webdriver.By.className("deleteButton"));
+    deleteButton.click();
+    driver.wait(webdriver.until.elementIsNotVisible(driver.findElement(webdriver.By.css("ul li"))), 2000);
 };
 
 module.exports.clickEdit = function() {

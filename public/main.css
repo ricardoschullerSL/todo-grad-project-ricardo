@@ -109,7 +109,8 @@ h1 {
 }
 
 #deleteCompletedButton{
-    background-color : green;
+    background-color : red;
+    color : #ffffff;
 }
 
 form {

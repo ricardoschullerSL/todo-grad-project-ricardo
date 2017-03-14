@@ -74,7 +74,7 @@ testing.describe("end to end", function() {
             helpers.getTodoList().then(function(elements) {
                 assert.equal(elements.length, 0);
             });
-        });*/ //this test doesn't work properly for the angular front end yet
+        });*/ // TODO FIX THIS TEST
         testing.it("displays an error if the request fails", function() {
             helpers.navigateToSite();
             helpers.addTodo("New todo item");
