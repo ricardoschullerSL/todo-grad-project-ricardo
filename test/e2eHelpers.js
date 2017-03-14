@@ -64,13 +64,14 @@ module.exports.getInputText = function() {
 
 module.exports.getErrorText = function() {
     var errorElement = driver.findElement(webdriver.By.id("error"));
-    driver.wait(webdriver.until.elementTextContains(errorElement, "Failed"), 5000);
+    driver.wait(webdriver.until.elementTextContains(errorElement, "Failed"), 2000);
     return errorElement.getText();
 };
 
 module.exports.getTodoList = function() {
     var todoListPlaceholder = driver.findElement(webdriver.By.id("todo-list-placeholder"));
-    driver.wait(webdriver.until.elementIsNotVisible(todoListPlaceholder), 5000);
+    driver.wait(webdriver.until.elementIsNotVisible(todoListPlaceholder), 2000);
+    driver.findElement(webdriver.By.id("todo-list")).getAttribute("innerHTML");
     return driver.findElements(webdriver.By.css("#todo-list li"));
 };
 
@@ -80,33 +81,35 @@ module.exports.addTodo = function(text) {
 };
 
 module.exports.clickDeleteTodo = function() {
-    driver.wait(webdriver.until.elementLocated(webdriver.By.className("deleteButton")), 5000);
-    driver.findElement(webdriver.By.className("deleteButton")).click();
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("deleteButton")));
+    var deleteButton = driver.findElement(webdriver.By.className("deleteButton"));
+    deleteButton.click();
+    driver.wait(webdriver.until.elementIsNotVisible(driver.findElement(webdriver.By.css("ul li"))), 2000);
 };
 
 module.exports.clickEdit = function() {
-    driver.wait(webdriver.until.elementLocated(webdriver.By.className("editButton")), 5000);
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("editButton")), 2000);
     driver.findElement(webdriver.By.className("editButton")).click();
 };
 
 module.exports.clickComplete = function () {
-    driver.wait(webdriver.until.elementLocated(webdriver.By.className("completeButton")), 5000);
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("completeButton")), 2000);
     driver.findElement(webdriver.By.className("completeButton")).click();
 };
 
 module.exports.findTodo = function () {
-    driver.wait(webdriver.until.elementLocated(webdriver.By.css("#item-0 span")), 5000);
-    var todo = driver.findElement(webdriver.By.css("#item-0 span"));
+    driver.wait(webdriver.until.elementLocated(webdriver.By.css("ul li span")), 2000);
+    var todo = driver.findElement(webdriver.By.css("ul li span"));
     return todo;
 };
 
 module.exports.updateTodo = function() {
     module.exports.clickEdit();
-    driver.wait(webdriver.until.elementLocated(webdriver.By.className("inputForm")), 5000);
+    driver.wait(webdriver.until.elementLocated(webdriver.By.className("inputForm")), 2000);
     var inputForm = driver.findElement(webdriver.By.className("inputForm"));
     inputForm.sendKeys("This has been updated\uE007");
     var updatedTodo = module.exports.findTodo();
-    driver.wait(webdriver.until.elementTextContains(updatedTodo, "updated"), 5000);
+    driver.wait(webdriver.until.elementTextContains(updatedTodo, "updated"), 2000);
     return updatedTodo.getText();
 };
 
@@ -120,18 +123,18 @@ module.exports.cancelUpdate = function() {
 
 module.exports.completeTodo = function() {
     module.exports.clickComplete();
-    driver.wait(webdriver.until.elementLocated(webdriver.By.css("#item-0 span")));
-    var completedTodo = driver.findElement(webdriver.By.css("#item-0 span"));
+    driver.wait(webdriver.until.elementLocated(webdriver.By.css("ul li span")), 2000);
+    var completedTodo = driver.findElement(webdriver.By.css("ul li span"));
     return completedTodo.getAttribute("class");
 };
 
 module.exports.findDeleteComplete = function() {
     module.exports.clickComplete();
-    driver.wait(webdriver.until.elementLocated(webdriver.By.id("deleteCompletedButton")));
+    driver.wait(webdriver.until.elementLocated(webdriver.By.id("deleteCompletedButton")), 2000);
     driver.findElement(webdriver.By.id("deleteCompletedButton")).click();
     var deleteCompletedButton = driver.findElement(webdriver.By.id("deleteCompletedButton"));
-    driver.wait(webdriver.until.elementIsNotVisible(deleteCompletedButton));
-    return driver.findElements(webdriver.By.id("#todo-list li"));
+    driver.wait(webdriver.until.elementIsNotVisible(deleteCompletedButton), 2000);
+    return driver.findElements(webdriver.By.id("ul li"));
 };
 
 module.exports.setupErrorRoute = function(action, route) {

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="todoApp">
     <head>
         <meta charset="utf-8">
         <title>TODO List</title>
@@ -10,18 +10,25 @@
         <header>
             <h1>TODO List</h1>
         </header>
+        <div ng-controller ="todoListCtrl">
         <div id="count-label" class="counterLabel"></div>
-        <div id="filter-placeholder"></div>
-        <div id="deleteCompletedButton"><button></button></div>
-        <section>
-            <h2 id="todo-list-placeholder">Loading...</h2>
-            <ul id="todo-list"></ul>
-            <form id="todo-form">
-                <input id="new-todo" placeholder="What needs to be done?" autofocus>
-                <input id="submit-todo" type="submit" value="Create">
-            </form>
-            <div id="error"></div>
-        </section>
+        <div id="filter-placeholder" filter-directive></div>
+            <span>
+                Completed todos : {{tdListService.data.completedCounter}}
+
+            </span>
+            <section>
+            <todo-list-directive></todo-list-directive>
+                <form ng-submit="submitTodo(title)" id="todo-form">
+                    <input id="new-todo" ng-model="title" placeholder="What needs to be done?" autofocus>
+                    <input id="submit-todo" type="submit" value="Create">
+                </form>
+                <div id="error">{{tdListService.data.errorMessage}}</div>
+            </section>
+            {{updateCounter()}}
+        </div>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
         <script type="text/javascript" src="main.js"></script>
     </body>
 </html>

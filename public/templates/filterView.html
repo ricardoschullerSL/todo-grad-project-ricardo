@@ -1,0 +1,5 @@
+<button class="button" id="filterAll" ng-model="filterAll" ng-click="setFilter('all')">All</button>
+<button class="button" id="filterTodo" ng-model="filterTodo" ng-click="setFilter('todo')">Todo</button>
+<button class="button" id="filterCompleted" ng-model="filterCompleted" ng-click="setFilter('completed')">Completed</button>
+<button class="button" id="deleteCompletedButton" ng-show="tdListService.data.completedCounter > 0"
+        ng-click="deleteCompleted()">Delete Completed</button>

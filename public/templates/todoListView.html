@@ -1,0 +1,17 @@
+
+<h2 id="todo-list-placeholder" ng-show="tdListService.data.todoArray === undefined">Loading...</h2>
+<ul id="todo-list">
+    <li ng-repeat="todo in tdListService.data.todoArray | filter: todoFilter" ng-class="'repeated-item'">
+        <span ng-show="!editMode" ng-class="todo.isComplete ? 'completedTodo' : 'uncompletedTodo' ">{{todo.title}}</span>
+        <form ng-show="editMode === true" ng-submit="submitEditedTodo(todo, newTitle); editMode = false;">
+            <input ng-model="newTitle" class ="inputForm" placeholder={{todo.title}}>
+            <button class="button cancelButton" type="button" ng-click="editMode = false">Cancel</button>
+            <input class="button submitButton" type="submit" value="Submit">
+        </form>
+        <button class="button deleteButton" ng-click="deleteTodo(todo)">Delete</button>
+        <button class="button editButton" ng-click="newTitle = ''; editMode = true;">Edit</button>
+        <button class="button completeButton" ng-click="completeTodo(todo)">Complete</button>
+    </li>
+</ul>
+
+

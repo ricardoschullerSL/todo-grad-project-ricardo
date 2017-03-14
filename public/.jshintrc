@@ -6,6 +6,9 @@
   "undef": true,
   "browser": true,
   "globals": {
-    "console": true
+    "console": true,
+    "angular": true,
+    "module": true,
+    "require": true
   }
 }
